@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Feeling Linuxy - Linux Distribution Finder</title>
+    <meta name="description" content="Find your perfect Linux distribution from 393 options using our advanced matching algorithm.">
+    <meta name="keywords" content="Linux, Find my Linux, Linux distribution, best Linux distro, Linux for beginners, Linux for gaming, Linux for developers">
+    <meta name="author" content="Stephen J Daniel">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-60deg, #EFBF04, #EFBF04, #f5bd04, #FFB343);
+            background-size: 400% 400%;
+            animation: gradient 45s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        .penguin-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .penguin-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 15px 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid transparent;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .penguin-tab:hover {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .penguin-tab.active {
+            border-color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 20px;
+            border-radius: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.9);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-options {
+            align-self: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .option-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .click-feedback {
+            animation: clickPulse 0.3s ease-out;
+        }
+
+        @keyframes clickPulse {
+            0% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% { 
+                box-shadow: 0 0 0 8px rgba(245, 189, 4, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            100% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .distro-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .distro-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .distro-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .distro-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .difficulty.beginner { background: #4CAF50; color: white; }
+        .difficulty.intermediate { background: #FF9800; color: white; }
+        .difficulty.advanced { background: #f44336; color: white; }
+
+        .performance {
+            font-weight: bold;
+        }
+
+        .performance.light { color: #4CAF50; }
+        .performance.medium { color: #FF9800; }
+        .performance.heavy { color: #f44336; }
+
+        .match-score {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .score-excellent { background: #4CAF50; }
+        .score-good { background: #8BC34A; }
+        .score-average { background: #FFC107; }
+        .score-poor { background: #FF9800; }
+        .score-weak { background: #f44336; }
+
+        .restart-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .restart-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .nerd-stats-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nerd-stats-btn:hover {
+            background: #777;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .heart {
+            color: #e74c3c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #f5bd04;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 20px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .penguin-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .penguin-tab {
+                width: 200px;
+            }
+            
+            .nerd-stats-btn {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="penguin-tabs">
+                <a href="simple-imfeelinglinuxy.html" class="penguin-tab" id="simpleTab">
+                    💻 Simple
+                </a>
+                <a href="#" class="penguin-tab active" id="advancedTab">
+                    🖥️ Advanced
+                </a>
+                <a href="expert-imfeelinglinuxy.html" class="penguin-tab" id="expertTab">
+                    🗄️ Expert
+                </a>
+            </div>
+            <h1>I'm Feeling Linuxy</h1>
+            <p>Find your perfect Linux!</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <!-- Chat messages will be inserted here -->
+            </div>
+        </div>
+
+        <div class="glass-card hidden" id="resultsContainer">
+            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Your Perfect Linux Matches</h2>
+            <div class="results-grid" id="resultsGrid">
+                <!-- Results will be inserted here -->
+            </div>
+            <div style="text-align: center;">
+                <button class="restart-btn" onclick="restartQuiz()">Start Over</button>
+                <a href="expert-imfeelinglinuxy.html" class="nerd-stats-btn">Nerd Stats</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Created by <a href="https://stephenjdaniel.com" target="_blank">Stephen J Daniel</a> | Made with <span class="heart">♥</span> for Linux</p>
+        <p>For Nerds check this out at <a href="https://distrowatch.com/dwres.php?resource=popularity" target="_blank">DistroWatch</a></p>
+    </div>
+
+    <script>
+        // Penguin level tracking
+        let currentPenguinLevel = 'advanced'; // Default level
+        
+        // Enhanced questions based on research
+        const questions = [
+            {
+                text: "Hi there! What kind of computer are you planning to use Linux on?",
+                options: [
+                    { text: "Modern powerful desktop/laptop", value: "modern" },
+                    { text: "Older computer (3-10 years)", value: "older" },
+                    { text: "Very old computer to revive (10+ years)", value: "ancient" },
+                    { text: "Gaming rig", value: "gaming" },
+                    { text: "Workstation for professional use", value: "workstation" }
+                ]
+            },
+            {
+                text: "What's your experience level with Linux and computers?",
+                options: [
+                    { text: "Complete beginner - I want it simple", value: "beginner" },
+                    { text: "Some experience - ready to learn", value: "intermediate" },
+                    { text: "Comfortable with technical stuff", value: "advanced" },
+                    { text: "Expert - I live in the terminal", value: "expert" }
+                ]
+            },
+            {
+                text: "What will be your PRIMARY use for this system?",
+                options: [
+                    { text: "Everyday desktop use", value: "desktop" },
+                    { text: "Gaming & entertainment", value: "gaming" },
+                    { text: "Programming & development", value: "development" },
+                    { text: "Creative work (design, video, audio)", value: "creative" },
+                    { text: "Privacy & security", value: "privacy" }
+                ]
+            },
+            {
+                text: "Any SECONDARY important uses?",
+                options: [
+                    { text: "Home server / self-hosting", value: "homeserver" },
+                    { text: "Network storage (NAS)", value: "nas" },
+                    { text: "System administration", value: "sysadmin" },
+                    { text: "Education / learning", value: "education" },
+                    { text: "Web browsing only", value: "webbrowsing" },
+                    { text: "No secondary use", value: "none" }
+                ]
+            },
+            {
+                text: "How do you feel about software updates?",
+                options: [
+                    { text: "Stable & reliable (LTS)", value: "stable" },
+                    { text: "Latest features & updates", value: "latest" },
+                    { text: "Rolling release (always current)", value: "rolling" }
+                ]
+            },
+            {
+                text: "What desktop environment appeals to you?",
+                options: [
+                    { text: "Familiar Windows-like", value: "windows" },
+                    { text: "Clean macOS-like", value: "macos" },
+                    { text: "Modern & flashy", value: "modern" },
+                    { text: "Simple & lightweight", value: "minimal" },
+                    { text: "Highly customizable", value: "custom" },
+                    { text: "No preference", value: "nopref" }
+                ]
+            }
+        ];
+
+        // Comprehensive distro database with enhanced attributes
+        const distroData = [
+            {
+                name: "CachyOS",
+                bestFor: "Performance Enthusiasts, Gamers",
+                difficulty: "intermediate",
+                desktopFeel: "Modern & Flashy",
+                performance: "medium",
+                hardwareNeeds: "4GB+ RAM, Modern CPU",
+                updateStyle: "Rolling Release",
+                description: "CPU-optimized for speed, gaming kernel, user-friendly installer",
+                useCases: {
+                    gaming: 9,
+                    development: 7,
+                    desktop: 8,
+                    creative: 6,
+                    privacy: 5,
+                    homeserver: 4,
+                    nas: 3,
+                    sysadmin: 5,
+                    education: 4
+                },
+                specialFeatures: ["gamingKernel", "performanceOptimized"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Linux Mint",
+                bestFor: "Windows Switchers, Beginners",
+                difficulty: "beginner",
+                desktopFeel: "Familiar & Windows-like",
+                performance: "medium",
+                hardwareNeeds: "2GB RAM, 20GB Storage",
+                updateStyle: "Set & Forget (LTS)",
+                description: "A beginner-friendly distribution that offers a familiar desktop experience and 'just works' out of the box",
+                useCases: {
+                    gaming: 6,
+                    development: 7,
+                    desktop: 10,
+                    creative: 7,
+                    privacy: 6,
+                    homeserver: 5,
+                    nas: 4,
+                    sysadmin: 6,
+                    education: 8
+                },
+                specialFeatures: ["userFriendly", "windowsFamiliar"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true,
+                    extensiveWiki: true
+                }
+            },
+            {
+                name: "MX Linux",
+                bestFor: "Older Computers, Minimalists",
+                difficulty: "beginner",
+                desktopFeel: "Classic & Efficient",
+                performance: "light",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Stable & Secure",
+                description: "Lightweight, stable desktop distro with excellent built-in system management tools",
+                useCases: {
+                    gaming: 4,
+                    development: 6,
+                    desktop: 8,
+                    creative: 5,
+                    privacy: 7,
+                    homeserver: 6,
+                    nas: 5,
+                    sysadmin: 7,
+                    education: 7
+                },
+                specialFeatures: ["lightweight", "oldHardware"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Debian",
+                bestFor: "Servers, Purists, Stability Lovers",
+                difficulty: "intermediate",
+                desktopFeel: "Clean & Traditional",
+                performance: "medium",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Very Stable (LTS)",
+                description: "The universal, reliable base for many distros, known for unwavering stability",
+                useCases: {
+                    gaming: 5,
+                    development: 8,
+                    desktop: 7,
+                    creative: 6,
+                    privacy: 7,
+                    homeserver: 9,
+                    nas: 8,
+                    sysadmin: 9,
+                    education: 7
+                },
+                specialFeatures: ["stable", "reliable"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true,
+                    extensiveWiki: true
+                }
+            },
+            {
+                name: "TrueNAS",
+                bestFor: "Network-Attached Storage (NAS)",
+                difficulty: "advanced",
+                desktopFeel: "Web Management Interface",
+                performance: "heavy",
+                hardwareNeeds: "16GB RAM, 20GB Storage",
+                updateStyle: "Stable",
+                description: "The leading open-source NAS OS (FreeBSD-based) with enterprise features",
+                useCases: {
+                    gaming: 1,
+                    development: 3,
+                    desktop: 2,
+                    creative: 2,
+                    privacy: 6,
+                    homeserver: 10,
+                    nas: 10,
+                    sysadmin: 8,
+                    education: 4
+                },
+                specialFeatures: ["nasOptimized", "storageFocused"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true
+                }
+            },
+            {
+                name: "OpenMediaVault",
+                bestFor: "NAS Solution",
+                difficulty: "intermediate",
+                desktopFeel: "Web Management Interface",
+                performance: "light",
+                hardwareNeeds: "1GB RAM, 8GB Storage",
+                updateStyle: "Stable",
+                description: "A dedicated, open-source Network Attached Storage OS based on Debian",
+                useCases: {
+                    gaming: 1,
+                    development: 2,
+                    desktop: 2,
+                    creative: 2,
+                    privacy: 5,
+                    homeserver: 9,
+                    nas: 10,
+                    sysadmin: 7,
+                    education: 3
+                },
+                specialFeatures: ["nasOptimized", "webManagement"],
+                communitySupport: {
+                    activeForums: true,
+                    goodDocumentation: true
+                }
+            },
+            {
+                name: "Proxmox VE",
+                bestFor: "Virtualization Server",
+                difficulty: "advanced",
+                desktopFeel: "Web Management Interface",
+                performance: "heavy",
+                hardwareNeeds: "8GB RAM, 20GB Storage",
+                updateStyle: "Stable",
+                description: "Complete virtualization management platform for enterprise and home use",
+                useCases: {
+                    gaming: 2,
+                    development: 6,
+                    desktop: 3,
+                    creative: 3,
+                    privacy: 5,
+                    homeserver: 10,
+                    nas: 7,
+                    sysadmin: 10,
+                    education: 6
+                },
+                specialFeatures: ["virtualization", "enterprise"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    commercialSupport: true
+                }
+            },
+            {
+                name: "Arch Linux",
+                bestFor: "Purists, Learners, DIYers",
+                difficulty: "advanced",
+                desktopFeel: "Your Choice (Minimal Start)",
+                performance: "light",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Rolling Release",
+                description: "The ultimate DIY, minimal base system where you build everything from scratch",
+                useCases: {
+                    gaming: 7,
+                    development: 9,
+                    desktop: 6,
+                    creative: 7,
+                    privacy: 8,
+                    homeserver: 8,
+                    nas: 6,
+                    sysadmin: 9,
+                    education: 5
+                },
+                specialFeatures: ["minimal", "customizable"],
+                communitySupport: {
+                    largeCommunity: true,
+                    extensiveWiki: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Ubuntu",
+                bestFor: "First-Time Linux Users",
+                difficulty: "beginner",
+                desktopFeel: "Polished & Standard",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 25GB Storage",
+                updateStyle: "Set & Forget (LTS)",
+                description: "The most popular Linux distro with massive community support and extensive documentation",
+                useCases: {
+                    gaming: 7,
+                    development: 8,
+                    desktop: 9,
+                    creative: 7,
+                    privacy: 6,
+                    homeserver: 7,
+                    nas: 6,
+                    sysadmin: 8,
+                    education: 8
+                },
+                specialFeatures: ["userFriendly", "wellDocumented"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true,
+                    extensiveWiki: true,
+                    commercialSupport: true
+                }
+            },
+            {
+                name: "Fedora",
+                bestFor: "Developers, Tech Enthusiasts",
+                difficulty: "intermediate",
+                desktopFeel: "Clean & Cutting-Edge",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Frequent & Fresh",
+                description: "Features the latest innovations and technologies, sponsored by Red Hat",
+                useCases: {
+                    gaming: 6,
+                    development: 9,
+                    desktop: 8,
+                    creative: 7,
+                    privacy: 7,
+                    homeserver: 6,
+                    nas: 5,
+                    sysadmin: 7,
+                    education: 7
+                },
+                specialFeatures: ["cuttingEdge", "developerFriendly"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Pop!_OS",
+                bestFor: "Developers, Creators, STEM",
+                difficulty: "beginner",
+                desktopFeel: "Modern & Productive",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Set & Forget (LTS)",
+                description: "Designed for STEM and creative work with excellent GPU support and built-in tiling windows",
+                useCases: {
+                    gaming: 8,
+                    development: 9,
+                    desktop: 9,
+                    creative: 8,
+                    privacy: 6,
+                    homeserver: 5,
+                    nas: 4,
+                    sysadmin: 6,
+                    education: 8
+                },
+                specialFeatures: ["gpuSupport", "tilingWindows"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = {};
+
+        // Advanced scoring algorithm based on research
+        function calculateAdvancedScore(userAnswers, distro) {
+            let totalScore = 0;
+            
+            // 1. Hardware Compatibility (Weight: 3.5)
+            totalScore += calculateHardwareCompatibility(userAnswers.q1, distro) * 3.5;
+            
+            // 2. Experience Level Matching (Weight: 2.5)
+            totalScore += calculateExperienceFit(userAnswers.q2, distro) * 2.5;
+            
+            // 3. Primary Use Case (Weight: 4.0)
+            totalScore += calculatePrimaryUseOptimization(userAnswers.q3, distro) * 4.0;
+            
+            // 4. Secondary Use Case (Weight: 2.0)
+            totalScore += calculateSecondaryUseSupport(userAnswers.q4, distro) * 2.0;
+            
+            // 5. Update Philosophy (Weight: 1.5)
+            totalScore += calculateUpdateAlignment(userAnswers.q5, distro) * 1.5;
+            
+            // 6. Desktop Environment (Weight: 1.5)
+            totalScore += calculateDesktopPreference(userAnswers.q6, distro) * 1.5;
+            
+            // 7. Community & Support Bonus (Research-based bonus)
+            totalScore += calculateCommunitySupportBonus(distro);
+            
+            // 8. Hardware Specialization Bonus
+            totalScore += calculateHardwareSpecializationBonus(userAnswers.q1, distro);
+            
+            // Apply penguin level adjustments
+            totalScore = applyPenguinLevelAdjustments(totalScore, distro);
+            
+            return Math.min(100, Math.round(totalScore));
+        }
+
+        function applyPenguinLevelAdjustments(score, distro) {
+            // Adjust scoring based on selected penguin level
+            switch(currentPenguinLevel) {
+                case 'simple':
+                    // In simple mode, boost beginner-friendly distros
+                    if (distro.difficulty === 'beginner') {
+                        return score * 1.1;
+                    }
+                    // Penalize advanced distros in simple mode
+                    if (distro.difficulty === 'advanced') {
+                        return score * 0.8;
+                    }
+                    break;
+                    
+                case 'expert':
+                    // In expert mode, boost advanced distros
+                    if (distro.difficulty === 'advanced') {
+                        return score * 1.1;
+                    }
+                    // Penalize beginner distros in expert mode
+                    if (distro.difficulty === 'beginner') {
+                        return score * 0.9;
+                    }
+                    break;
+                    
+                default:
+                    // Advanced mode (default) uses standard scoring
+                    break;
+            }
+            
+            return score;
+        }
+
+        function calculateHardwareCompatibility(userHardware, distro) {
+            const compatibilityMatrix = {
+                'ancient': {
+                    'light': { base: 10, bonus: 2 },
+                    'medium': { base: 6, bonus: 0 },
+                    'heavy': { base: 1, bonus: -2 }
+                },
+                'older': {
+                    'light': { base: 8, bonus: 1 },
+                    'medium': { base: 9, bonus: 2 },
+                    'heavy': { base: 4, bonus: 0 }
+                },
+                'modern': {
+                    'light': { base: 5, bonus: 0 },
+                    'medium': { base: 8, bonus: 1 },
+                    'heavy': { base: 10, bonus: 2 }
+                },
+                'gaming': {
+                    'light': { base: 2, bonus: -1 },
+                    'medium': { base: 7, bonus: 1 },
+                    'heavy': { base: 10, bonus: 3 }
+                },
+                'workstation': {
+                    'light': { base: 3, bonus: 0 },
+                    'medium': { base: 7, bonus: 1 },
+                    'heavy': { base: 9, bonus: 2 }
+                }
+            };
+            
+            const match = compatibilityMatrix[userHardware]?.[distro.performance] || { base: 5, bonus: 0 };
+            return match.base + match.bonus;
+        }
+
+        function calculateExperienceFit(userExperience, distro) {
+            const experienceMatrix = {
+                'beginner': {
+                    'beginner': { base: 10, learning: 2 },
+                    'intermediate': { base: 4, learning: 1 },
+                    'advanced': { base: 1, learning: 0 }
+                },
+                'intermediate': {
+                    'beginner': { base: 7, learning: 0 },
+                    'intermediate': { base: 10, learning: 2 },
+                    'advanced': { base: 6, learning: 1 }
+                },
+                'advanced': {
+                    'beginner': { base: 3, learning: -1 },
+                    'intermediate': { base: 7, learning: 0 },
+                    'advanced': { base: 10, learning: 1 }
+                },
+                'expert': {
+                    'beginner': { base: 1, learning: -2 },
+                    'intermediate': { base: 4, learning: -1 },
+                    'advanced': { base: 10, learning: 2 }
+                }
+            };
+            
+            const match = experienceMatrix[userExperience]?.[distro.difficulty] || { base: 5, learning: 0 };
+            
+            let learningBonus = 0;
+            if (userExperience === 'beginner' && distro.difficulty === 'beginner') {
+                learningBonus = 2;
+            } else if (userExperience === 'intermediate' && distro.difficulty === 'intermediate') {
+                learningBonus = 1;
+            }
+            
+            return match.base + match.learning + learningBonus;
+        }
+
+        function calculatePrimaryUseOptimization(primaryUse, distro) {
+            if (!distro.useCases || !primaryUse) return 5;
+            
+            const baseScore = distro.useCases[primaryUse] || 5;
+            
+            const optimizationBonuses = {
+                'gaming': {
+                    factors: ['gamingKernel', 'performanceOptimized', 'gpuSupport'],
+                    bonus: 2
+                },
+                'development': {
+                    factors: ['developerFriendly', 'cuttingEdge', 'devTools'],
+                    bonus: 2
+                },
+                'creative': {
+                    factors: ['multimedia', 'audioVideo', 'graphics'],
+                    bonus: 2
+                },
+                'privacy': {
+                    factors: ['security', 'encryption', 'anonymization'],
+                    bonus: 2
+                },
+                'desktop': {
+                    factors: ['userFriendly', 'polished', 'easyToUse'],
+                    bonus: 1
+                }
+            };
+            
+            const optimization = optimizationBonuses[primaryUse];
+            if (optimization && distro.specialFeatures) {
+                const hasOptimization = optimization.factors.some(feature => 
+                    distro.specialFeatures.includes(feature)
+                );
+                if (hasOptimization) {
+                    return Math.min(10, baseScore + optimization.bonus);
+                }
+            }
+            
+            return baseScore;
+        }
+
+        function calculateSecondaryUseSupport(secondaryUse, distro) {
+            if (!distro.useCases || !secondaryUse || secondaryUse === 'none') return 5;
+            
+            const baseScore = distro.useCases[secondaryUse] || 3;
+            
+            const secondaryWeights = {
+                'homeserver': 0.8,
+                'nas': 0.8,
+                'sysadmin': 0.7,
+                'education': 0.6,
+                'webbrowsing': 0.5
+            };
+            
+            const weight = secondaryWeights[secondaryUse] || 0.5;
+            return baseScore * weight;
+        }
+
+        function calculateUpdateAlignment(updatePref, distro) {
+            const updateScores = {
+                'stable': {
+                    keywords: ['Stable', 'LTS', 'Set & Forget', 'Long-Term'],
+                    score: 10,
+                    alternatives: { 'Rolling': 2, 'Latest': 5 }
+                },
+                'latest': {
+                    keywords: ['Latest', 'Fresh', 'Current', 'Recent'],
+                    score: 10,
+                    alternatives: { 'Stable': 6, 'LTS': 7, 'Rolling': 9 }
+                },
+                'rolling': {
+                    keywords: ['Rolling', 'Continuous', 'Always Current'],
+                    score: 10,
+                    alternatives: { 'Stable': 2, 'LTS': 3, 'Latest': 8 }
+                }
+            };
+            
+            const preference = updateScores[updatePref];
+            if (!preference) return 5;
+            
+            for (const keyword of preference.keywords) {
+                if (distro.updateStyle.includes(keyword)) {
+                    return preference.score;
+                }
+            }
+            
+            for (const [altKey, altScore] of Object.entries(preference.alternatives)) {
+                if (distro.updateStyle.includes(altKey)) {
+                    return altScore;
+                }
+            }
+            
+            return 5;
+        }
+
+        function calculateDesktopPreference(desktopPref, distro) {
+            const desktopFeel = distro.desktopFeel.toLowerCase();
+            const desktopScores = {
+                'windows': {
+                    matches: ['windows', 'familiar', 'traditional'],
+                    score: 10,
+                    fallback: 3
+                },
+                'macos': {
+                    matches: ['macos', 'elegant', 'simple', 'clean'],
+                    score: 10,
+                    fallback: 3
+                },
+                'modern': {
+                    matches: ['modern', 'flashy', 'stunning', 'beautiful'],
+                    score: 10,
+                    fallback: 3
+                },
+                'minimal': {
+                    matches: ['simple', 'minimal', 'lightweight', 'efficient'],
+                    score: 10,
+                    fallback: 3
+                },
+                'custom': {
+                    matches: ['choice', 'custom', 'flexible', 'configurable'],
+                    score: 10,
+                    fallback: 3
+                },
+                'nopref': {
+                    matches: [],
+                    score: 7,
+                    fallback: 7
+                }
+            };
+            
+            const preference = desktopScores[desktopPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.some(match => desktopFeel.includes(match))) {
+                return preference.score;
+            }
+            
+            return preference.fallback;
+        }
+
+        function calculateCommunitySupportBonus(distro) {
+            const communityFactors = {
+                largeCommunity: 2,
+                goodDocumentation: 1,
+                activeForums: 1,
+                commercialSupport: 1,
+                extensiveWiki: 1
+            };
+            
+            let bonus = 0;
+            if (distro.communitySupport) {
+                Object.keys(communityFactors).forEach(factor => {
+                    if (distro.communitySupport[factor]) {
+                        bonus += communityFactors[factor];
+                    }
+                });
+            }
+            
+            return Math.min(3, bonus);
+        }
+
+        function calculateHardwareSpecializationBonus(userHardware, distro) {
+            const hardwareSpecialization = {
+                'gaming': ['gaming', 'performance', 'optimized'],
+                'ancient': ['lightweight', 'old hardware', 'low resource'],
+                'workstation': ['professional', 'workstation', 'enterprise']
+            };
+            
+            const specializations = hardwareSpecialization[userHardware];
+            if (!specializations || !distro.specialFeatures) return 0;
+            
+            const hasSpecialization = specializations.some(feature =>
+                distro.specialFeatures.some(sf => sf.toLowerCase().includes(feature))
+            );
+            
+            return hasSpecialization ? 2 : 0;
+        }
+
+        function getScoreClass(score) {
+            if (score >= 85) return 'score-excellent';
+            if (score >= 70) return 'score-good';
+            if (score >= 55) return 'score-average';
+            if (score >= 40) return 'score-poor';
+            return 'score-weak';
+        }
+
+        // Create click sound using Web Audio API
+        function createClickSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 600;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio context not supported");
+            }
+        }
+
+        function playClickFeedback(element) {
+            // Visual feedback
+            element.classList.add('click-feedback');
+            
+            // Audio feedback
+            createClickSound();
+            
+            // Remove visual feedback class after animation completes
+            setTimeout(() => {
+                element.classList.remove('click-feedback');
+            }, 300);
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = {};
+            document.getElementById('chatContainer').innerHTML = '';
+            document.getElementById('resultsContainer').classList.add('hidden');
+            updateProgressBar();
+            showQuestion(currentQuestion);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function showQuestion(questionIndex) {
+            const question = questions[questionIndex];
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Add bot message
+            const botMessage = document.createElement('div');
+            botMessage.className = 'message bot-message';
+            botMessage.innerHTML = `<p>${question.text}</p>`;
+            chatContainer.appendChild(botMessage);
+            
+            // Add user options
+            const userOptions = document.createElement('div');
+            userOptions.className = 'message user-options';
+            
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.onclick = (e) => selectAnswer(questionIndex, option.value, e.currentTarget);
+                userOptions.appendChild(button);
+            });
+            
+            chatContainer.appendChild(userOptions);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function selectAnswer(questionIndex, answer, element) {
+            // Play click feedback
+            playClickFeedback(element);
+            
+            userAnswers[`q${questionIndex + 1}`] = answer;
+            
+            // Add user's selection to chat
+            const chatContainer = document.getElementById('chatContainer');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-options';
+            
+            const selectedOption = questions[questionIndex].options.find(opt => opt.value === answer);
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = selectedOption.text;
+            button.style.background = '#f5bd04';
+            button.style.color = '#333';
+            userMessage.appendChild(button);
+            
+            chatContainer.appendChild(userMessage);
+            
+            // Move to next question or show results
+            if (questionIndex < questions.length - 1) {
+                currentQuestion++;
+                updateProgressBar();
+                setTimeout(() => showQuestion(currentQuestion), 800);
+            } else {
+                // Show loading message
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message bot-message';
+                loadingMessage.innerHTML = `<p>Analyzing your preferences<span class="loading-dots"></span></p>`;
+                chatContainer.appendChild(loadingMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                setTimeout(showResults, 1500);
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showResults() {
+            try {
+                // Validate all questions are answered
+                const unanswered = questions.map((q, i) => userAnswers[`q${i+1}`] ? null : i+1).filter(Boolean);
+                if (unanswered.length > 0) {
+                    throw new Error(`Please answer question ${unanswered[0]}`);
+                }
+
+                // Calculate scores for all distributions
+                const scoredDistros = distroData.map(distro => {
+                    const score = calculateAdvancedScore(userAnswers, distro);
+                    return { ...distro, score };
+                }).filter(distro => distro.score > 0); // Filter out zero-score matches
+                
+                // Sort by score descending and take top 6
+                const matches = scoredDistros
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 6);
+                
+                if (matches.length === 0) {
+                    throw new Error("No suitable distributions found. Please try different preferences.");
+                }
+                
+                displayResults(matches);
+            } catch (error) {
+                console.error("Error calculating results:", error);
+                const chatContainer = document.getElementById('chatContainer');
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message bot-message';
+                errorMessage.innerHTML = `<p>❌ ${error.message}</p>`;
+                chatContainer.appendChild(errorMessage);
+                
+                // Show restart button
+                const restartBtn = document.createElement('button');
+                restartBtn.className = 'restart-btn';
+                restartBtn.textContent = 'Try Again';
+                restartBtn.onclick = restartQuiz;
+                chatContainer.appendChild(restartBtn);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function displayResults(matches) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = '';
+            
+            matches.forEach((distro, index) => {
+                const card = document.createElement('div');
+                card.className = 'distro-card';
+                const scoreClass = getScoreClass(distro.score);
+                
+                card.innerHTML = `
+                    <div class="match-score ${scoreClass}">${distro.score}/100</div>
+                    <div class="difficulty ${distro.difficulty}">${distro.difficulty.charAt(0).toUpperCase() + distro.difficulty.slice(1)}</div>
+                    <h3>${distro.name}</h3>
+                    <p><strong>Perfect for:</strong> ${distro.bestFor}</p>
+                    <p><strong>Desktop feel:</strong> ${distro.desktopFeel}</p>
+                    <p><strong>Performance:</strong> <span class="performance ${distro.performance}">${distro.performance}</span></p>
+                    <p><strong>Hardware needs:</strong> ${distro.hardwareNeeds}</p>
+                    <p><strong>Updates:</strong> ${distro.updateStyle}</p>
+                    <p>${distro.description}</p>
+                `;
+                
+                resultsGrid.appendChild(card);
+            });
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.remove('hidden');
+            startQuiz();
+        }
+
+        // Add click feedback to penguin tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const penguinTabs = document.querySelectorAll('.penguin-tab');
+            penguinTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    playClickFeedback(this);
+                });
+            });
+        });
+
+        // Start the quiz when page loads
+        window.onload = function() {
+            // Advanced is already selected by default with active class
+            currentPenguinLevel = 'advanced';
+            
+            // Show first question after a delay
+            setTimeout(() => showQuestion(currentQuestion), 500);
+        };
+    </script>
+</body>
+</html>
