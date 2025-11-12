@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Feeling Linuxy - Expert</title>
+    <meta name="description" content="Find your perfect Linux distribution from 393 options using our expert matching algorithm.">
+    <meta name="keywords" content="Linux, Find my Linux, Linux distribution, expert Linux, advanced Linux, system administration, development">
+    <meta name="author" content="Stephen J Daniel">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-60deg, #EFBF04, #EFBF04, #f5bd04, #FFB343);
+            background-size: 400% 400%;
+            animation: gradient 45s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        .penguin-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .penguin-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 15px 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid transparent;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .penguin-tab:hover {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .penguin-tab.active {
+            border-color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 20px;
+            border-radius: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.9);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-options {
+            align-self: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .option-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .click-feedback {
+            animation: clickPulse 0.3s ease-out;
+        }
+
+        @keyframes clickPulse {
+            0% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% { 
+                box-shadow: 0 0 0 8px rgba(245, 189, 4, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            100% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .distro-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .distro-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .distro-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .distro-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .difficulty.beginner { background: #4CAF50; color: white; }
+        .difficulty.intermediate { background: #FF9800; color: white; }
+        .difficulty.advanced { background: #f44336; color: white; }
+
+        .performance {
+            font-weight: bold;
+        }
+
+        .performance.light { color: #4CAF50; }
+        .performance.medium { color: #FF9800; }
+        .performance.heavy { color: #f44336; }
+
+        .match-score {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .score-excellent { background: #4CAF50; }
+        .score-good { background: #8BC34A; }
+        .score-average { background: #FFC107; }
+        .score-poor { background: #FF9800; }
+        .score-weak { background: #f44336; }
+
+        .restart-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .restart-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .nerd-stats-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nerd-stats-btn:hover {
+            background: #777;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .heart {
+            color: #e74c3c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #f5bd04;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Expert-specific controls */
+        .expert-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .expert-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .expert-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .expert-control select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #333;
+            font-size: 1em;
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 20px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .penguin-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .penguin-tab {
+                width: 200px;
+            }
+            
+            .nerd-stats-btn {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+            
+            .expert-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="penguin-tabs">
+                <a href="simple-imfeelinglinuxy.html" class="penguin-tab" id="simpleTab">
+                    💻 Simple
+                </a>
+                <a href="index.html" class="penguin-tab" id="advancedTab">
+                    🖥️ Advanced
+                </a>
+                <a href="#" class="penguin-tab active" id="expertTab">
+                    🗄️ Expert
+                </a>
+            </div>
+            <h1>I'm Feeling Linuxy</h1>
+            <p>Find your perfect Linux!</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <!-- Chat messages will be inserted here -->
+            </div>
+        </div>
+
+        <div class="glass-card hidden" id="resultsContainer">
+            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Your Perfect Linux Matches</h2>
+            <div class="expert-controls" id="expertControls">
+                <div class="expert-control">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy" onchange="sortResults()">
+                        <option value="score">Match Score</option>
+                        <option value="performance">Performance</option>
+                        <option value="difficulty">Difficulty</option>
+                        <option value="stability">Stability</option>
+                    </select>
+                </div>
+                <div class="expert-control">
+                    <label for="filterDifficulty">Filter by Difficulty:</label>
+                    <select id="filterDifficulty" onchange="filterResults()">
+                        <option value="all">All Levels</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                <div class="expert-control">
+                    <label for="filterPackageManager">Filter by Package Manager:</label>
+                    <select id="filterPackageManager" onchange="filterResults()">
+                        <option value="all">All Package Managers</option>
+                        <option value="apt">APT</option>
+                        <option value="pacman">Pacman</option>
+                        <option value="dnf">DNF</option>
+                        <option value="zypp">ZYpp</option>
+                        <option value="portage">Portage</option>
+                    </select>
+                </div>
+            </div>
+            <div class="results-grid" id="resultsGrid">
+                <!-- Results will be inserted here -->
+            </div>
+            <div style="text-align: center;">
+                <button class="restart-btn" onclick="restartQuiz()">Start Over</button>
+                <button class="nerd-stats-btn" onclick="showNerdStats()">Nerd Stats</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Created by <a href="https://stephenjdaniel.com" target="_blank">Stephen J Daniel</a> | Made with <span class="heart">♥</span> for Linux</p>
+        <p>For Nerds check this out at <a href="https://distrowatch.com/dwres.php?resource=popularity" target="_blank">DistroWatch</a></p>
+    </div>
+
+    <script>
+        // Expert questions with more technical depth
+        const questions = [
+            {
+                text: "What's your primary technical use case for this Linux system?",
+                options: [
+                    { text: "Software Development & DevOps", value: "development" },
+                    { text: "System Administration & Infrastructure", value: "sysadmin" },
+                    { text: "Security & Penetration Testing", value: "security" },
+                    { text: "High-Performance Computing", value: "hpc" },
+                    { text: "Container Orchestration", value: "containers" },
+                    { text: "Network Services & Routing", value: "networking" }
+                ]
+            },
+            {
+                text: "What's your preferred package management approach?",
+                options: [
+                    { text: "Traditional binary packages (APT, DNF)", value: "binary" },
+                    { text: "Rolling release with binary packages (Pacman)", value: "rolling_binary" },
+                    { text: "Source-based compilation (Portage, Nix)", value: "source" },
+                    { text: "Immutable/atomic updates (rpm-ostree, Flatpak)", value: "immutable" },
+                    { text: "Hybrid approach (multiple package managers)", value: "hybrid" }
+                ]
+            },
+            {
+                text: "What init system do you prefer?",
+                options: [
+                    { text: "systemd (modern, feature-rich)", value: "systemd" },
+                    { text: "OpenRC (traditional, lightweight)", value: "openrc" },
+                    { text: "runit (simple, reliable)", value: "runit" },
+                    { text: "s6 (advanced process supervision)", value: "s6" },
+                    { text: "BSD init (traditional UNIX)", value: "bsd_init" },
+                    { text: "No preference / don't care", value: "nopref" }
+                ]
+            },
+            {
+                text: "What filesystem features are important to you?",
+                options: [
+                    { text: "Stability and maturity (ext4)", value: "stable" },
+                    { text: "Advanced features (Btrfs, ZFS)", value: "advanced" },
+                    { text: "Performance (XFS)", value: "performance" },
+                    { text: "Security features (encryption, ACLs)", value: "security" },
+                    { text: "Cross-platform compatibility", value: "compatibility" },
+                    { text: "No specific preference", value: "nopref" }
+                ]
+            },
+            {
+                text: "What's your kernel preference?",
+                options: [
+                    { text: "Mainline/LTS kernel (stability)", value: "mainline" },
+                    { text: "Latest kernel (new features)", value: "latest" },
+                    { text: "Hardened kernel (security)", value: "hardened" },
+                    { text: "Real-time kernel (low latency)", value: "realtime" },
+                    { text: "Custom/self-compiled kernel", value: "custom" }
+                ]
+            },
+            {
+                text: "How important is community vs corporate backing?",
+                options: [
+                    { text: "Strong community-driven project", value: "community" },
+                    { text: "Corporate-backed with commercial support", value: "corporate" },
+                    { text: "Academic/research institution backing", value: "academic" },
+                    { text: "Independent/grassroots development", value: "independent" },
+                    { text: "No preference", value: "nopref" }
+                ]
+            },
+            {
+                text: "What's your container/virtualization strategy?",
+                options: [
+                    { text: "Docker/Podman containers", value: "docker" },
+                    { text: "System virtualization (KVM, VirtualBox)", value: "virtualization" },
+                    { text: "Lightweight containers (LXC/LXD)", value: "lxc" },
+                    { text: "Application containers (Flatpak, Snap)", value: "app_containers" },
+                    { text: "Bare metal / no virtualization", value: "bare_metal" }
+                ]
+            },
+            {
+                text: "What desktop environment or window manager do you prefer?",
+                options: [
+                    { text: "Tiling window managers (i3, Sway)", value: "tiling" },
+                    { text: "Minimal desktop (XFCE, LXQt)", value: "minimal" },
+                    { text: "Full desktop (GNOME, KDE)", value: "full" },
+                    { text: "Headless / server only", value: "headless" },
+                    { text: "Custom/DIY setup", value: "custom" }
+                ]
+            }
+        ];
+
+        // Expert distro database with technical details
+        const distroData = [
+            {
+                name: "Arch Linux",
+                bestFor: "Purists, Learners, DIYers",
+                difficulty: "advanced",
+                desktopFeel: "Your Choice (Minimal Start)",
+                performance: "light",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Rolling Release",
+                description: "The ultimate DIY, minimal base system where you build everything from scratch",
+                useCases: {
+                    development: 9,
+                    sysadmin: 8,
+                    security: 7,
+                    hpc: 6,
+                    containers: 8,
+                    networking: 7
+                },
+                packageManager: "pacman",
+                initSystem: "systemd",
+                filesystem: "ext4",
+                kernel: "latest",
+                backing: "community",
+                virtualization: "docker",
+                desktop: "custom",
+                specialFeatures: ["minimal", "customizable", "AUR"],
+                communitySupport: {
+                    largeCommunity: true,
+                    extensiveWiki: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Gentoo",
+                bestFor: "Ultimate Optimization, Learners",
+                difficulty: "advanced",
+                desktopFeel: "Your Choice (Source-based)",
+                performance: "highly optimized",
+                hardwareNeeds: "2GB RAM, 20GB Storage",
+                updateStyle: "Rolling Release",
+                description: "Compile everything from source for your specific CPU architecture",
+                useCases: {
+                    development: 8,
+                    sysadmin: 7,
+                    security: 8,
+                    hpc: 9,
+                    containers: 7,
+                    networking: 7
+                },
+                packageManager: "portage",
+                initSystem: "openrc",
+                filesystem: "ext4",
+                kernel: "custom",
+                backing: "community",
+                virtualization: "docker",
+                desktop: "custom",
+                specialFeatures: ["sourceBased", "highlyOptimized"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "NixOS",
+                bestFor: "Developers, SysAdmins",
+                difficulty: "advanced",
+                desktopFeel: "Your Choice",
+                performance: "reliable",
+                hardwareNeeds: "2GB RAM, 20GB Storage",
+                updateStyle: "Rolling & Stable",
+                description: "Reproducible system configurations with declarative package management",
+                useCases: {
+                    development: 10,
+                    sysadmin: 9,
+                    security: 8,
+                    hpc: 7,
+                    containers: 8,
+                    networking: 7
+                },
+                packageManager: "nix",
+                initSystem: "systemd",
+                filesystem: "ext4",
+                kernel: "mainline",
+                backing: "academic",
+                virtualization: "docker",
+                desktop: "custom",
+                specialFeatures: ["reproducible", "declarative"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Fedora",
+                bestFor: "Developers, Tech Enthusiasts",
+                difficulty: "intermediate",
+                desktopFeel: "Clean & Cutting-Edge",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Frequent & Fresh",
+                description: "Features the latest innovations and technologies, sponsored by Red Hat",
+                useCases: {
+                    development: 9,
+                    sysadmin: 7,
+                    security: 7,
+                    hpc: 6,
+                    containers: 8,
+                    networking: 7
+                },
+                packageManager: "dnf",
+                initSystem: "systemd",
+                filesystem: "btrfs",
+                kernel: "latest",
+                backing: "corporate",
+                virtualization: "docker",
+                desktop: "full",
+                specialFeatures: ["cuttingEdge", "developerFriendly"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Debian",
+                bestFor: "Servers, Purists, Stability Lovers",
+                difficulty: "intermediate",
+                desktopFeel: "Clean & Traditional",
+                performance: "medium",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Very Stable (LTS)",
+                description: "The universal, reliable base for many distros, known for unwavering stability",
+                useCases: {
+                    development: 8,
+                    sysadmin: 9,
+                    security: 8,
+                    hpc: 7,
+                    containers: 8,
+                    networking: 9
+                },
+                packageManager: "apt",
+                initSystem: "systemd",
+                filesystem: "ext4",
+                kernel: "mainline",
+                backing: "community",
+                virtualization: "docker",
+                desktop: "minimal",
+                specialFeatures: ["stable", "reliable"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true,
+                    extensiveWiki: true
+                }
+            },
+            {
+                name: "openSUSE",
+                bestFor: "SysAdmins, Power Users",
+                difficulty: "intermediate",
+                desktopFeel: "Polished & Robust",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Choice (Stable/Rolling)",
+                description: "Enterprise-grade distribution with powerful YaST configuration tool",
+                useCases: {
+                    development: 8,
+                    sysadmin: 10,
+                    security: 7,
+                    hpc: 7,
+                    containers: 8,
+                    networking: 8
+                },
+                packageManager: "zypp",
+                initSystem: "systemd",
+                filesystem: "btrfs",
+                kernel: "mainline",
+                backing: "corporate",
+                virtualization: "docker",
+                desktop: "full",
+                specialFeatures: ["yast", "enterprise"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Alpine Linux",
+                bestFor: "Containers, Security, Embedded",
+                difficulty: "advanced",
+                desktopFeel: "Minimal (No GUI by default)",
+                performance: "extremely light",
+                hardwareNeeds: "128MB RAM, 100MB Storage",
+                updateStyle: "Stable & Secure",
+                description: "Security-focused, tiny base image using musl libc and BusyBox",
+                useCases: {
+                    development: 7,
+                    sysadmin: 8,
+                    security: 10,
+                    hpc: 6,
+                    containers: 10,
+                    networking: 8
+                },
+                packageManager: "apk",
+                initSystem: "openrc",
+                filesystem: "ext4",
+                kernel: "hardened",
+                backing: "community",
+                virtualization: "docker",
+                desktop: "headless",
+                specialFeatures: ["securityFocused", "minimal"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "FreeBSD",
+                bestFor: "Server Admins, BSD Enthusiasts",
+                difficulty: "advanced",
+                desktopFeel: "Your Choice",
+                performance: "rock-solid",
+                hardwareNeeds: "2GB RAM, 10GB Storage",
+                updateStyle: "Stable & Secure",
+                description: "Not Linux; a mature BSD system with ZFS support and advanced networking",
+                useCases: {
+                    development: 8,
+                    sysadmin: 10,
+                    security: 9,
+                    hpc: 7,
+                    containers: 7,
+                    networking: 10
+                },
+                packageManager: "pkg",
+                initSystem: "bsd_init",
+                filesystem: "zfs",
+                kernel: "bsd",
+                backing: "community",
+                virtualization: "bare_metal",
+                desktop: "custom",
+                specialFeatures: ["zfs", "jails", "dtrace"],
+                communitySupport: {
+                    largeCommunity: true,
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Kali Linux",
+                bestFor: "Security Professionals, Pentesters",
+                difficulty: "advanced",
+                desktopFeel: "Utilitarian & Clean",
+                performance: "standard",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Rolling Release",
+                description: "Hundreds of pre-installed security tools for penetration testing",
+                useCases: {
+                    development: 6,
+                    sysadmin: 7,
+                    security: 10,
+                    hpc: 5,
+                    containers: 6,
+                    networking: 8
+                },
+                packageManager: "apt",
+                initSystem: "systemd",
+                filesystem: "ext4",
+                kernel: "mainline",
+                backing: "corporate",
+                virtualization: "docker",
+                desktop: "minimal",
+                specialFeatures: ["securityTools", "pentesting"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            },
+            {
+                name: "Qubes OS",
+                bestFor: "Extreme Security Needs",
+                difficulty: "advanced",
+                desktopFeel: "Compartmentalized (VMs)",
+                performance: "heavy",
+                hardwareNeeds: "8GB RAM, 40GB Storage",
+                updateStyle: "Stable",
+                description: "Security by compartmentalization in isolated virtual machines",
+                useCases: {
+                    development: 7,
+                    sysadmin: 8,
+                    security: 10,
+                    hpc: 5,
+                    containers: 6,
+                    networking: 7
+                },
+                packageManager: "dnf",
+                initSystem: "systemd",
+                filesystem: "ext4",
+                kernel: "hardened",
+                backing: "community",
+                virtualization: "virtualization",
+                desktop: "custom",
+                specialFeatures: ["securityByCompartmentalization"],
+                communitySupport: {
+                    goodDocumentation: true,
+                    activeForums: true
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let currentDistros = [...distroData];
+
+        // Expert scoring algorithm with technical weights
+        function calculateExpertScore(userAnswers, distro) {
+            let totalScore = 0;
+            
+            // 1. Technical Use Case (Weight: 4.0)
+            totalScore += calculateTechnicalUseCase(userAnswers.q1, distro) * 4.0;
+            
+            // 2. Package Management (Weight: 3.5)
+            totalScore += calculatePackageManagementFit(userAnswers.q2, distro) * 3.5;
+            
+            // 3. Init System (Weight: 2.5)
+            totalScore += calculateInitSystemFit(userAnswers.q3, distro) * 2.5;
+            
+            // 4. Filesystem (Weight: 2.0)
+            totalScore += calculateFilesystemFit(userAnswers.q4, distro) * 2.0;
+            
+            // 5. Kernel (Weight: 2.0)
+            totalScore += calculateKernelFit(userAnswers.q5, distro) * 2.0;
+            
+            // 6. Backing (Weight: 1.5)
+            totalScore += calculateBackingFit(userAnswers.q6, distro) * 1.5;
+            
+            // 7. Virtualization (Weight: 2.0)
+            totalScore += calculateVirtualizationFit(userAnswers.q7, distro) * 2.0;
+            
+            // 8. Desktop (Weight: 1.5)
+            totalScore += calculateDesktopFit(userAnswers.q8, distro) * 1.5;
+            
+            // 9. Technical Expertise Bonus
+            totalScore += calculateTechnicalBonus(distro);
+            
+            return Math.min(100, Math.round(totalScore));
+        }
+
+        function calculateTechnicalUseCase(userUseCase, distro) {
+            if (!distro.useCases || !userUseCase) return 5;
+            
+            const baseScore = distro.useCases[userUseCase] || 5;
+            
+            const technicalBonuses = {
+                'development': {
+                    factors: ['developerFriendly', 'cuttingEdge', 'devTools'],
+                    bonus: 2
+                },
+                'sysadmin': {
+                    factors: ['enterprise', 'stable', 'reliable'],
+                    bonus: 2
+                },
+                'security': {
+                    factors: ['securityFocused', 'securityTools', 'hardened'],
+                    bonus: 2
+                },
+                'hpc': {
+                    factors: ['highlyOptimized', 'performance'],
+                    bonus: 2
+                },
+                'containers': {
+                    factors: ['minimal', 'dockerOptimized'],
+                    bonus: 2
+                },
+                'networking': {
+                    factors: ['networking', 'zfs'],
+                    bonus: 2
+                }
+            };
+            
+            const bonus = technicalBonuses[userUseCase];
+            if (bonus && distro.specialFeatures) {
+                const hasBonus = bonus.factors.some(feature => 
+                    distro.specialFeatures.includes(feature)
+                );
+                if (hasBonus) {
+                    return Math.min(10, baseScore + bonus.bonus);
+                }
+            }
+            
+            return baseScore;
+        }
+
+        function calculatePackageManagementFit(userPackagePref, distro) {
+            const packageScores = {
+                'binary': {
+                    matches: ['apt', 'dnf', 'zypp'],
+                    score: 10,
+                    alternatives: { 'pacman': 7, 'portage': 3, 'nix': 4, 'apk': 6 }
+                },
+                'rolling_binary': {
+                    matches: ['pacman'],
+                    score: 10,
+                    alternatives: { 'apt': 5, 'dnf': 6, 'zypp': 5, 'portage': 7, 'nix': 6, 'apk': 7 }
+                },
+                'source': {
+                    matches: ['portage'],
+                    score: 10,
+                    alternatives: { 'apt': 3, 'dnf': 3, 'zypp': 3, 'pacman': 5, 'nix': 8, 'apk': 4 }
+                },
+                'immutable': {
+                    matches: ['nix'],
+                    score: 10,
+                    alternatives: { 'apt': 4, 'dnf': 5, 'zypp': 4, 'pacman': 6, 'portage': 7, 'apk': 5 }
+                },
+                'hybrid': {
+                    matches: [],
+                    score: 7,
+                    alternatives: {}
+                }
+            };
+            
+            const preference = packageScores[userPackagePref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.packageManager)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.packageManager] || 5;
+        }
+
+        function calculateInitSystemFit(userInitPref, distro) {
+            const initScores = {
+                'systemd': {
+                    matches: ['systemd'],
+                    score: 10,
+                    alternatives: { 'openrc': 3, 'runit': 4, 's6': 4, 'bsd_init': 2 }
+                },
+                'openrc': {
+                    matches: ['openrc'],
+                    score: 10,
+                    alternatives: { 'systemd': 3, 'runit': 7, 's6': 7, 'bsd_init': 5 }
+                },
+                'runit': {
+                    matches: ['runit'],
+                    score: 10,
+                    alternatives: { 'systemd': 4, 'openrc': 7, 's6': 8, 'bsd_init': 6 }
+                },
+                's6': {
+                    matches: ['s6'],
+                    score: 10,
+                    alternatives: { 'systemd': 4, 'openrc': 7, 'runit': 8, 'bsd_init': 6 }
+                },
+                'bsd_init': {
+                    matches: ['bsd_init'],
+                    score: 10,
+                    alternatives: { 'systemd': 2, 'openrc': 5, 'runit': 6, 's6': 6 }
+                },
+                'nopref': {
+                    matches: [],
+                    score: 7,
+                    alternatives: {}
+                }
+            };
+            
+            const preference = initScores[userInitPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.initSystem)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.initSystem] || 5;
+        }
+
+        function calculateFilesystemFit(userFilesystemPref, distro) {
+            const filesystemScores = {
+                'stable': {
+                    matches: ['ext4'],
+                    score: 10,
+                    alternatives: { 'btrfs': 7, 'zfs': 6, 'xfs': 8 }
+                },
+                'advanced': {
+                    matches: ['btrfs', 'zfs'],
+                    score: 10,
+                    alternatives: { 'ext4': 6, 'xfs': 7 }
+                },
+                'performance': {
+                    matches: ['xfs'],
+                    score: 10,
+                    alternatives: { 'ext4': 7, 'btrfs': 8, 'zfs': 7 }
+                },
+                'security': {
+                    matches: ['zfs'],
+                    score: 10,
+                    alternatives: { 'ext4': 6, 'btrfs': 8, 'xfs': 7 }
+                },
+                'compatibility': {
+                    matches: ['ext4'],
+                    score: 10,
+                    alternatives: { 'btrfs': 7, 'zfs': 5, 'xfs': 8 }
+                },
+                'nopref': {
+                    matches: [],
+                    score: 7,
+                    alternatives: {}
+                }
+            };
+            
+            const preference = filesystemScores[userFilesystemPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.filesystem)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.filesystem] || 5;
+        }
+
+        function calculateKernelFit(userKernelPref, distro) {
+            const kernelScores = {
+                'mainline': {
+                    matches: ['mainline'],
+                    score: 10,
+                    alternatives: { 'latest': 7, 'hardened': 6, 'realtime': 5, 'custom': 6, 'bsd': 2 }
+                },
+                'latest': {
+                    matches: ['latest'],
+                    score: 10,
+                    alternatives: { 'mainline': 7, 'hardened': 5, 'realtime': 5, 'custom': 7, 'bsd': 2 }
+                },
+                'hardened': {
+                    matches: ['hardened'],
+                    score: 10,
+                    alternatives: { 'mainline': 6, 'latest': 5, 'realtime': 7, 'custom': 8, 'bsd': 3 }
+                },
+                'realtime': {
+                    matches: ['realtime'],
+                    score: 10,
+                    alternatives: { 'mainline': 5, 'latest': 5, 'hardened': 7, 'custom': 8, 'bsd': 3 }
+                },
+                'custom': {
+                    matches: ['custom'],
+                    score: 10,
+                    alternatives: { 'mainline': 6, 'latest': 7, 'hardened': 8, 'realtime': 8, 'bsd': 4 }
+                }
+            };
+            
+            const preference = kernelScores[userKernelPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.kernel)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.kernel] || 3;
+        }
+
+        function calculateBackingFit(userBackingPref, distro) {
+            const backingScores = {
+                'community': {
+                    matches: ['community'],
+                    score: 10,
+                    alternatives: { 'corporate': 4, 'academic': 7, 'independent': 8 }
+                },
+                'corporate': {
+                    matches: ['corporate'],
+                    score: 10,
+                    alternatives: { 'community': 6, 'academic': 5, 'independent': 4 }
+                },
+                'academic': {
+                    matches: ['academic'],
+                    score: 10,
+                    alternatives: { 'community': 7, 'corporate': 5, 'independent': 6 }
+                },
+                'independent': {
+                    matches: ['independent'],
+                    score: 10,
+                    alternatives: { 'community': 8, 'corporate': 4, 'academic': 6 }
+                },
+                'nopref': {
+                    matches: [],
+                    score: 7,
+                    alternatives: {}
+                }
+            };
+            
+            const preference = backingScores[userBackingPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.backing)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.backing] || 5;
+        }
+
+        function calculateVirtualizationFit(userVirtualizationPref, distro) {
+            const virtualizationScores = {
+                'docker': {
+                    matches: ['docker'],
+                    score: 10,
+                    alternatives: { 'virtualization': 7, 'lxc': 8, 'app_containers': 6, 'bare_metal': 3 }
+                },
+                'virtualization': {
+                    matches: ['virtualization'],
+                    score: 10,
+                    alternatives: { 'docker': 7, 'lxc': 8, 'app_containers': 5, 'bare_metal': 4 }
+                },
+                'lxc': {
+                    matches: ['lxc'],
+                    score: 10,
+                    alternatives: { 'docker': 8, 'virtualization': 8, 'app_containers': 6, 'bare_metal': 4 }
+                },
+                'app_containers': {
+                    matches: ['app_containers'],
+                    score: 10,
+                    alternatives: { 'docker': 6, 'virtualization': 5, 'lxc': 6, 'bare_metal': 3 }
+                },
+                'bare_metal': {
+                    matches: ['bare_metal'],
+                    score: 10,
+                    alternatives: { 'docker': 3, 'virtualization': 4, 'lxc': 4, 'app_containers': 3 }
+                }
+            };
+            
+            const preference = virtualizationScores[userVirtualizationPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.virtualization)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.virtualization] || 5;
+        }
+
+        function calculateDesktopFit(userDesktopPref, distro) {
+            const desktopScores = {
+                'tiling': {
+                    matches: ['custom'],
+                    score: 10,
+                    alternatives: { 'minimal': 8, 'full': 4, 'headless': 3 }
+                },
+                'minimal': {
+                    matches: ['minimal'],
+                    score: 10,
+                    alternatives: { 'custom': 8, 'full': 5, 'headless': 6 }
+                },
+                'full': {
+                    matches: ['full'],
+                    score: 10,
+                    alternatives: { 'minimal': 5, 'custom': 4, 'headless': 2 }
+                },
+                'headless': {
+                    matches: ['headless'],
+                    score: 10,
+                    alternatives: { 'minimal': 6, 'custom': 3, 'full': 2 }
+                },
+                'custom': {
+                    matches: ['custom'],
+                    score: 10,
+                    alternatives: { 'minimal': 8, 'full': 4, 'headless': 3 }
+                }
+            };
+            
+            const preference = desktopScores[userDesktopPref];
+            if (!preference) return 5;
+            
+            if (preference.matches.includes(distro.desktop)) {
+                return preference.score;
+            }
+            
+            return preference.alternatives[distro.desktop] || 5;
+        }
+
+        function calculateTechnicalBonus(distro) {
+            let bonus = 0;
+            
+            // Bonus for advanced features
+            if (distro.specialFeatures) {
+                const advancedFeatures = ['sourceBased', 'highlyOptimized', 'reproducible', 'declarative', 'securityByCompartmentalization'];
+                const hasAdvanced = distro.specialFeatures.some(feature => 
+                    advancedFeatures.includes(feature)
+                );
+                if (hasAdvanced) bonus += 2;
+            }
+            
+            // Bonus for expert-level difficulty
+            if (distro.difficulty === 'advanced') bonus += 2;
+            
+            return Math.min(4, bonus);
+        }
+
+        function getScoreClass(score) {
+            if (score >= 85) return 'score-excellent';
+            if (score >= 70) return 'score-good';
+            if (score >= 55) return 'score-average';
+            if (score >= 40) return 'score-poor';
+            return 'score-weak';
+        }
+
+        // Create click sound using Web Audio API
+        function createClickSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 600;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio context not supported");
+            }
+        }
+
+        function playClickFeedback(element) {
+            // Visual feedback
+            element.classList.add('click-feedback');
+            
+            // Audio feedback
+            createClickSound();
+            
+            // Remove visual feedback class after animation completes
+            setTimeout(() => {
+                element.classList.remove('click-feedback');
+            }, 300);
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = {};
+            document.getElementById('chatContainer').innerHTML = '';
+            document.getElementById('resultsContainer').classList.add('hidden');
+            updateProgressBar();
+            showQuestion(currentQuestion);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function showQuestion(questionIndex) {
+            const question = questions[questionIndex];
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Add bot message
+            const botMessage = document.createElement('div');
+            botMessage.className = 'message bot-message';
+            botMessage.innerHTML = `<p>${question.text}</p>`;
+            chatContainer.appendChild(botMessage);
+            
+            // Add user options
+            const userOptions = document.createElement('div');
+            userOptions.className = 'message user-options';
+            
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.onclick = (e) => selectAnswer(questionIndex, option.value, e.currentTarget);
+                userOptions.appendChild(button);
+            });
+            
+            chatContainer.appendChild(userOptions);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function selectAnswer(questionIndex, answer, element) {
+            // Play click feedback
+            playClickFeedback(element);
+            
+            userAnswers[`q${questionIndex + 1}`] = answer;
+            
+            // Add user's selection to chat
+            const chatContainer = document.getElementById('chatContainer');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-options';
+            
+            const selectedOption = questions[questionIndex].options.find(opt => opt.value === answer);
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = selectedOption.text;
+            button.style.background = '#f5bd04';
+            button.style.color = '#333';
+            userMessage.appendChild(button);
+            
+            chatContainer.appendChild(userMessage);
+            
+            // Move to next question or show results
+            if (questionIndex < questions.length - 1) {
+                currentQuestion++;
+                updateProgressBar();
+                setTimeout(() => showQuestion(currentQuestion), 800);
+            } else {
+                // Show loading message
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message bot-message';
+                loadingMessage.innerHTML = `<p>Running advanced analysis<span class="loading-dots"></span></p>`;
+                chatContainer.appendChild(loadingMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                setTimeout(showResults, 1500);
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showResults() {
+            try {
+                // Validate all questions are answered
+                const unanswered = questions.map((q, i) => userAnswers[`q${i+1}`] ? null : i+1).filter(Boolean);
+                if (unanswered.length > 0) {
+                    throw new Error(`Please answer question ${unanswered[0]}`);
+                }
+
+                // Calculate scores for all distributions
+                const scoredDistros = distroData.map(distro => {
+                    const score = calculateExpertScore(userAnswers, distro);
+                    return { ...distro, score };
+                }).filter(distro => distro.score > 0); // Filter out zero-score matches
+                
+                // Sort by score descending and take top 8
+                currentDistros = scoredDistros
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 8);
+                
+                if (currentDistros.length === 0) {
+                    throw new Error("No suitable distributions found. Please try different preferences.");
+                }
+                
+                displayResults(currentDistros);
+            } catch (error) {
+                console.error("Error calculating results:", error);
+                const chatContainer = document.getElementById('chatContainer');
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message bot-message';
+                errorMessage.innerHTML = `<p>❌ ${error.message}</p>`;
+                chatContainer.appendChild(errorMessage);
+                
+                // Show restart button
+                const restartBtn = document.createElement('button');
+                restartBtn.className = 'restart-btn';
+                restartBtn.textContent = 'Try Again';
+                restartBtn.onclick = restartQuiz;
+                chatContainer.appendChild(restartBtn);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function displayResults(matches) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = '';
+            
+            matches.forEach((distro, index) => {
+                const card = document.createElement('div');
+                card.className = 'distro-card';
+                const scoreClass = getScoreClass(distro.score);
+                
+                card.innerHTML = `
+                    <div class="match-score ${scoreClass}">${distro.score}/100</div>
+                    <div class="difficulty ${distro.difficulty}">${distro.difficulty.charAt(0).toUpperCase() + distro.difficulty.slice(1)}</div>
+                    <h3>${distro.name}</h3>
+                    <p><strong>Perfect for:</strong> ${distro.bestFor}</p>
+                    <p><strong>Package Manager:</strong> ${distro.packageManager}</p>
+                    <p><strong>Init System:</strong> ${distro.initSystem}</p>
+                    <p><strong>Filesystem:</strong> ${distro.filesystem}</p>
+                    <p><strong>Kernel:</strong> ${distro.kernel}</p>
+                    <p><strong>Performance:</strong> <span class="performance ${distro.performance === 'light' || distro.performance === 'extremely light' ? 'light' : distro.performance === 'heavy' ? 'heavy' : 'medium'}">${distro.performance}</span></p>
+                    <p><strong>Updates:</strong> ${distro.updateStyle}</p>
+                    <p>${distro.description}</p>
+                `;
+                
+                resultsGrid.appendChild(card);
+            });
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+        }
+
+        function sortResults() {
+            const sortBy = document.getElementById('sortBy').value;
+            
+            switch(sortBy) {
+                case 'score':
+                    currentDistros.sort((a, b) => b.score - a.score);
+                    break;
+                case 'performance':
+                    // Sort by performance: light -> medium -> heavy
+                    const performanceOrder = { 'light': 3, 'medium': 2, 'heavy': 1, 'highly optimized': 4, 'rock-solid': 5, 'standard': 2, 'extremely light': 6, 'reliable': 3 };
+                    currentDistros.sort((a, b) => (performanceOrder[b.performance] || 0) - (performanceOrder[a.performance] || 0));
+                    break;
+                case 'difficulty':
+                    // Sort by difficulty: beginner -> intermediate -> advanced
+                    const difficultyOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+                    currentDistros.sort((a, b) => (difficultyOrder[b.difficulty] || 0) - (difficultyOrder[a.difficulty] || 0));
+                    break;
+                case 'stability':
+                    // Sort by stability based on update style
+                    const stabilityOrder = { 'Very Stable (LTS)': 5, 'Stable & Secure': 4, 'Stable': 3, 'Set & Forget (LTS)': 5, 'Choice (Stable/Rolling)': 3, 'Rolling & Stable': 2, 'Rolling Release': 1, 'Frequent & Fresh': 2 };
+                    currentDistros.sort((a, b) => (stabilityOrder[b.updateStyle] || 0) - (stabilityOrder[a.updateStyle] || 0));
+                    break;
+            }
+            
+            displayResults(currentDistros);
+        }
+
+        function filterResults() {
+            const difficultyFilter = document.getElementById('filterDifficulty').value;
+            const packageManagerFilter = document.getElementById('filterPackageManager').value;
+            
+            let filteredDistros = [...distroData];
+            
+            // Apply difficulty filter
+            if (difficultyFilter !== 'all') {
+                filteredDistros = filteredDistros.filter(distro => distro.difficulty === difficultyFilter);
+            }
+            
+            // Apply package manager filter
+            if (packageManagerFilter !== 'all') {
+                filteredDistros = filteredDistros.filter(distro => distro.packageManager === packageManagerFilter);
+            }
+            
+            // Recalculate scores for filtered distros
+            currentDistros = filteredDistros.map(distro => {
+                const score = calculateExpertScore(userAnswers, distro);
+                return { ...distro, score };
+            }).filter(distro => distro.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 8);
+            
+            displayResults(currentDistros);
+        }
+
+        function showNerdStats() {
+            const chatContainer = document.getElementById('chatContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            resultsContainer.classList.add('hidden');
+            chatContainer.classList.remove('hidden');
+            chatContainer.innerHTML = '';
+            
+            // Add nerd stats message
+            const statsMessage = document.createElement('div');
+            statsMessage.className = 'message bot-message';
+            statsMessage.innerHTML = `
+                <h3>Nerd Stats</h3>
+                <p>Here's a detailed breakdown of your preferences and how they match with different distributions:</p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Distribution</th>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Package Manager</th>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Init System</th>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Filesystem</th>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Kernel</th>
+                            <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Match Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${currentDistros.map(distro => `
+                            <tr>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>${distro.name}</strong></td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${distro.packageManager}</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${distro.initSystem}</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${distro.filesystem}</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${distro.kernel}</td>
+                                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><span class="match-score ${getScoreClass(distro.score)}">${distro.score}/100</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Your Preferences:</h4>
+                    <ul>
+                        ${Object.keys(userAnswers).map(key => {
+                            const question = questions[parseInt(key.substring(1)) - 1];
+                            const answer = question.options.find(opt => opt.value === userAnswers[key]);
+                            return `<li><strong>${question.text}</strong>: ${answer.text}</li>`;
+                        }).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            chatContainer.appendChild(statsMessage);
+            
+            // Add back button
+            const backButton = document.createElement('button');
+            backButton.className = 'restart-btn';
+            backButton.textContent = 'Back to Results';
+            backButton.onclick = () => {
+                chatContainer.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+            };
+            chatContainer.appendChild(backButton);
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.remove('hidden');
+            startQuiz();
+        }
+
+        // Add click feedback to penguin tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const penguinTabs = document.querySelectorAll('.penguin-tab');
+            penguinTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    playClickFeedback(this);
+                });
+            });
+        });
+
+        // Start the quiz when page loads
+        window.onload = function() {
+            // Expert is already selected by default with active class
+            
+            // Show first question after a delay
+            setTimeout(() => showQuestion(currentQuestion), 500);
+        };
+    </script>
+</body>
+</html>
