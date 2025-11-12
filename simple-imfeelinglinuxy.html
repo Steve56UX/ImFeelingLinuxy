@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Feeling Linuxy - Simple Linux Finder</title>
+    <meta name="description" content="Find your perfect Linux distribution in just 3 questions">
+    <meta name="keywords" content="Linux, Find my Linux, Linux for beginners, easy Linux">
+    <meta name="author" content="Stephen J Daniel">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-60deg, #EFBF04, #EFBF04, #f5bd04, #FFB343);
+            background-size: 400% 400%;
+            animation: gradient 45s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        .penguin-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .penguin-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 15px 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid transparent;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .penguin-tab:hover {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .penguin-tab.active {
+            border-color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 20px;
+            border-radius: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .bot-message {
+            background: rgba(255, 255, 255, 0.9);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-options {
+            align-self: flex-end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .option-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .click-feedback {
+            animation: clickPulse 0.3s ease-out;
+        }
+
+        @keyframes clickPulse {
+            0% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            50% { 
+                box-shadow: 0 0 0 8px rgba(245, 189, 4, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            100% { 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .distro-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .distro-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .distro-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .distro-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .difficulty.beginner { background: #4CAF50; color: white; }
+        .difficulty.intermediate { background: #FF9800; color: white; }
+        .difficulty.advanced { background: #f44336; color: white; }
+
+        .performance {
+            font-weight: bold;
+        }
+
+        .performance.light { color: #4CAF50; }
+        .performance.medium { color: #FF9800; }
+        .performance.heavy { color: #f44336; }
+
+        .match-score {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .score-excellent { background: #4CAF50; }
+        .score-good { background: #8BC34A; }
+        .score-average { background: #FFC107; }
+        .score-poor { background: #FF9800; }
+        .score-weak { background: #f44336; }
+
+        .restart-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .restart-btn:hover {
+            background: #f5bd04;
+            color: #333;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .nerd-stats-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nerd-stats-btn:hover {
+            background: #777;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .heart {
+            color: #e74c3c;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #f5bd04;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 20px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .penguin-tabs {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .penguin-tab {
+                width: 200px;
+            }
+            
+            .nerd-stats-btn {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="penguin-tabs">
+                <a href="#" class="penguin-tab active" id="simpleTab">
+                    💻 Simple
+                </a>
+                <a href="index.html" class="penguin-tab" id="advancedTab">
+                    🖥️ Advanced
+                </a>
+                <a href="expert-imfeelinglinuxy.html" class="penguin-tab" id="expertTab">
+                    🗄️ Expert
+                </a>
+            </div>
+            <h1>I'm Feeling Linuxy</h1>
+            <p>Find your perfect Linux!</p>
+        </div>
+
+        <div class="glass-card">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <!-- Chat messages will be inserted here -->
+            </div>
+        </div>
+
+        <div class="glass-card hidden" id="resultsContainer">
+            <h2 style="color: #333; text-align: center; margin-bottom: 20px;">Your Perfect Linux Match</h2>
+            <div class="results-grid" id="resultsGrid">
+                <!-- Results will be inserted here -->
+            </div>
+            <div style="text-align: center;">
+                <button class="restart-btn" onclick="restartQuiz()">Start Over</button>
+                <a href="advanced-imfeelinglinuxy.html" class="nerd-stats-btn">More Options</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Created by <a href="https://stephenjdaniel.com" target="_blank">Stephen J Daniel</a> | Made with <span class="heart">♥</span> for Linux</p>
+        <p>For Nerds check this out at <a href="https://distrowatch.com/dwres.php?resource=popularity" target="_blank">DistroWatch</a></p>
+    </div>
+
+    <script>
+        // Penguin level tracking
+        let currentPenguinLevel = 'simple'; // Default level
+        
+        // Simplified questions for beginners
+        const questions = [
+            {
+                text: "Hi! I'll help you find the perfect Linux. First, how old is your computer?",
+                options: [
+                    { text: "New computer (less than 3 years old)", value: "new" },
+                    { text: "A few years old (3-7 years)", value: "medium" },
+                    { text: "Old computer (more than 7 years)", value: "old" }
+                ]
+            },
+            {
+                text: "What will you mainly use your computer for?",
+                options: [
+                    { text: "Browsing, email, and everyday tasks", value: "everyday" },
+                    { text: "Playing games", value: "gaming" },
+                    { text: "Programming or creative work", value: "creative" }
+                ]
+            },
+            {
+                text: "How comfortable are you with computers?",
+                options: [
+                    { text: "Just want it to work (beginner)", value: "beginner" },
+                    { text: "Willing to learn a little", value: "willing" },
+                    { text: "I like tinkering with settings", value: "tinkerer" }
+                ]
+            }
+        ];
+
+        // Simplified distro database focused on beginner-friendly options
+        const distroData = [
+            {
+                name: "Linux Mint",
+                bestFor: "Windows Switchers, Beginners",
+                difficulty: "beginner",
+                desktopFeel: "Familiar & Windows-like",
+                performance: "medium",
+                hardwareNeeds: "2GB RAM, 20GB Storage",
+                updateStyle: "Set & Forget",
+                description: "A beginner-friendly distribution that feels familiar to Windows users and 'just works' out of the box",
+                useCases: {
+                    everyday: 10,
+                    gaming: 6,
+                    creative: 7
+                },
+                experienceLevel: {
+                    beginner: 10,
+                    willing: 8,
+                    tinkerer: 6
+                },
+                hardwareCompatibility: {
+                    new: 9,
+                    medium: 9,
+                    old: 7
+                }
+            },
+            {
+                name: "Ubuntu",
+                bestFor: "First-Time Linux Users",
+                difficulty: "beginner",
+                desktopFeel: "Polished & Standard",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 25GB Storage",
+                updateStyle: "Set & Forget",
+                description: "The most popular Linux distro with massive community support and extensive documentation",
+                useCases: {
+                    everyday: 9,
+                    gaming: 7,
+                    creative: 7
+                },
+                experienceLevel: {
+                    beginner: 9,
+                    willing: 9,
+                    tinkerer: 7
+                },
+                hardwareCompatibility: {
+                    new: 10,
+                    medium: 8,
+                    old: 6
+                }
+            },
+            {
+                name: "Pop!_OS",
+                bestFor: "Creators, Gamers, STEM",
+                difficulty: "beginner",
+                desktopFeel: "Modern & Productive",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 20GB Storage",
+                updateStyle: "Set & Forget",
+                description: "Great for gaming and creative work with excellent hardware support and built-in tiling windows",
+                useCases: {
+                    everyday: 9,
+                    gaming: 8,
+                    creative: 8
+                },
+                experienceLevel: {
+                    beginner: 8,
+                    willing: 9,
+                    tinkerer: 8
+                },
+                hardwareCompatibility: {
+                    new: 10,
+                    medium: 8,
+                    old: 5
+                }
+            },
+            {
+                name: "Zorin OS",
+                bestFor: "Windows & macOS Switchers",
+                difficulty: "beginner",
+                desktopFeel: "Looks like Windows or macOS",
+                performance: "medium",
+                hardwareNeeds: "2GB RAM, 20GB Storage",
+                updateStyle: "Set & Forget",
+                description: "Designed specifically to make the transition from Windows or macOS as smooth as possible",
+                useCases: {
+                    everyday: 10,
+                    gaming: 6,
+                    creative: 7
+                },
+                experienceLevel: {
+                    beginner: 10,
+                    willing: 8,
+                    tinkerer: 6
+                },
+                hardwareCompatibility: {
+                    new: 9,
+                    medium: 9,
+                    old: 7
+                }
+            },
+            {
+                name: "MX Linux",
+                bestFor: "Older Computers, Minimalists",
+                difficulty: "beginner",
+                desktopFeel: "Classic & Efficient",
+                performance: "light",
+                hardwareNeeds: "1GB RAM, 10GB Storage",
+                updateStyle: "Stable & Secure",
+                description: "Lightweight and stable with excellent built-in system management tools",
+                useCases: {
+                    everyday: 8,
+                    gaming: 4,
+                    creative: 5
+                },
+                experienceLevel: {
+                    beginner: 8,
+                    willing: 8,
+                    tinkerer: 7
+                },
+                hardwareCompatibility: {
+                    new: 6,
+                    medium: 8,
+                    old: 10
+                }
+            },
+            {
+                name: "Manjaro",
+                bestFor: "Gamers, Tech Enthusiasts",
+                difficulty: "intermediate",
+                desktopFeel: "Modern & Customizable",
+                performance: "medium",
+                hardwareNeeds: "4GB RAM, 30GB Storage",
+                updateStyle: "Rolling Release",
+                description: "User-friendly version of Arch Linux with great hardware detection and gaming support",
+                useCases: {
+                    everyday: 8,
+                    gaming: 9,
+                    creative: 8
+                },
+                experienceLevel: {
+                    beginner: 6,
+                    willing: 8,
+                    tinkerer: 9
+                },
+                hardwareCompatibility: {
+                    new: 10,
+                    medium: 8,
+                    old: 5
+                }
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = {};
+
+        // Simplified scoring algorithm for beginners
+        function calculateSimpleScore(userAnswers, distro) {
+            let totalScore = 0;
+            
+            // 1. Hardware Compatibility (Weight: 3)
+            const hardwareScore = distro.hardwareCompatibility[userAnswers.q1] || 5;
+            totalScore += hardwareScore * 3;
+            
+            // 2. Primary Use Case (Weight: 4)
+            const useCaseScore = distro.useCases[userAnswers.q2] || 5;
+            totalScore += useCaseScore * 4;
+            
+            // 3. Experience Level (Weight: 3)
+            const experienceScore = distro.experienceLevel[userAnswers.q3] || 5;
+            totalScore += experienceScore * 3;
+            
+            // Normalize to 100
+            return Math.min(100, Math.round(totalScore * 100 / 100));
+        }
+
+        function getScoreClass(score) {
+            if (score >= 85) return 'score-excellent';
+            if (score >= 70) return 'score-good';
+            if (score >= 55) return 'score-average';
+            if (score >= 40) return 'score-poor';
+            return 'score-weak';
+        }
+
+        // Create click sound using Web Audio API
+        function createClickSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 600;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio context not supported");
+            }
+        }
+
+        function playClickFeedback(element) {
+            // Visual feedback
+            element.classList.add('click-feedback');
+            
+            // Audio feedback
+            createClickSound();
+            
+            // Remove visual feedback class after animation completes
+            setTimeout(() => {
+                element.classList.remove('click-feedback');
+            }, 300);
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = {};
+            document.getElementById('chatContainer').innerHTML = '';
+            document.getElementById('resultsContainer').classList.add('hidden');
+            updateProgressBar();
+            showQuestion(currentQuestion);
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function showQuestion(questionIndex) {
+            const question = questions[questionIndex];
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Add bot message
+            const botMessage = document.createElement('div');
+            botMessage.className = 'message bot-message';
+            botMessage.innerHTML = `<p>${question.text}</p>`;
+            chatContainer.appendChild(botMessage);
+            
+            // Add user options
+            const userOptions = document.createElement('div');
+            userOptions.className = 'message user-options';
+            
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.onclick = (e) => selectAnswer(questionIndex, option.value, e.currentTarget);
+                userOptions.appendChild(button);
+            });
+            
+            chatContainer.appendChild(userOptions);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function selectAnswer(questionIndex, answer, element) {
+            // Play click feedback
+            playClickFeedback(element);
+            
+            userAnswers[`q${questionIndex + 1}`] = answer;
+            
+            // Add user's selection to chat
+            const chatContainer = document.getElementById('chatContainer');
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-options';
+            
+            const selectedOption = questions[questionIndex].options.find(opt => opt.value === answer);
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.textContent = selectedOption.text;
+            button.style.background = '#f5bd04';
+            button.style.color = '#333';
+            userMessage.appendChild(button);
+            
+            chatContainer.appendChild(userMessage);
+            
+            // Move to next question or show results
+            if (questionIndex < questions.length - 1) {
+                currentQuestion++;
+                updateProgressBar();
+                setTimeout(() => showQuestion(currentQuestion), 800);
+            } else {
+                // Show loading message
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message bot-message';
+                loadingMessage.innerHTML = `<p>Finding your perfect Linux<span class="loading-dots"></span></p>`;
+                chatContainer.appendChild(loadingMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                setTimeout(showResults, 1500);
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showResults() {
+            try {
+                // Validate all questions are answered
+                const unanswered = questions.map((q, i) => userAnswers[`q${i+1}`] ? null : i+1).filter(Boolean);
+                if (unanswered.length > 0) {
+                    throw new Error(`Please answer question ${unanswered[0]}`);
+                }
+
+                // Calculate scores for all distributions
+                const scoredDistros = distroData.map(distro => {
+                    const score = calculateSimpleScore(userAnswers, distro);
+                    return { ...distro, score };
+                }).filter(distro => distro.score > 0); // Filter out zero-score matches
+                
+                // Sort by score descending and take top 3
+                const matches = scoredDistros
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 3);
+                
+                if (matches.length === 0) {
+                    throw new Error("No suitable distributions found. Please try different preferences.");
+                }
+                
+                displayResults(matches);
+            } catch (error) {
+                console.error("Error calculating results:", error);
+                const chatContainer = document.getElementById('chatContainer');
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message bot-message';
+                errorMessage.innerHTML = `<p>❌ ${error.message}</p>`;
+                chatContainer.appendChild(errorMessage);
+                
+                // Show restart button
+                const restartBtn = document.createElement('button');
+                restartBtn.className = 'restart-btn';
+                restartBtn.textContent = 'Try Again';
+                restartBtn.onclick = restartQuiz;
+                chatContainer.appendChild(restartBtn);
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function displayResults(matches) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = '';
+            
+            matches.forEach((distro, index) => {
+                const card = document.createElement('div');
+                card.className = 'distro-card';
+                const scoreClass = getScoreClass(distro.score);
+                
+                card.innerHTML = `
+                    <div class="match-score ${scoreClass}">${distro.score}/100</div>
+                    <div class="difficulty ${distro.difficulty}">${distro.difficulty.charAt(0).toUpperCase() + distro.difficulty.slice(1)}</div>
+                    <h3>${distro.name}</h3>
+                    <p><strong>Perfect for:</strong> ${distro.bestFor}</p>
+                    <p><strong>Looks like:</strong> ${distro.desktopFeel}</p>
+                    <p><strong>Works best on:</strong> ${distro.hardwareNeeds}</p>
+                    <p>${distro.description}</p>
+                `;
+                
+                resultsGrid.appendChild(card);
+            });
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('chatContainer').classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('chatContainer').classList.remove('hidden');
+            startQuiz();
+        }
+
+        // Add click feedback to penguin tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const penguinTabs = document.querySelectorAll('.penguin-tab');
+            penguinTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    playClickFeedback(this);
+                });
+            });
+        });
+
+        // Start the quiz when page loads
+        window.onload = function() {
+            // Simple is already selected by default with active class
+            currentPenguinLevel = 'simple';
+            
+            // Show first question after a delay
+            setTimeout(() => showQuestion(currentQuestion), 500);
+        };
+    </script>
+</body>
+</html>
